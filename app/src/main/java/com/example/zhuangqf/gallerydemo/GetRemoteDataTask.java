@@ -7,6 +7,7 @@ import android.util.JsonReader;
 
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Created by zhuangqf on 7/14/16.
@@ -21,7 +22,7 @@ public class GetRemoteDataTask extends AsyncTask<Void,Void,Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-
+        RemoteImageInfo.deleteAll(RemoteImageInfo.class);
         try {
             URL url = new URL(MyApplication.REMOTE_URL);
             JsonReader jsonReader = new JsonReader(new InputStreamReader(url.openStream()));
@@ -45,11 +46,17 @@ public class GetRemoteDataTask extends AsyncTask<Void,Void,Void> {
                                 case "url":
                                     mInfo.url = jsonReader1.nextString();
                                     break;
+                                case "total_size":
+                                    mInfo.size = jsonReader1.nextLong();
+                                    break;
                                 default:
                                     jsonReader1.skipValue();
                                     break;
                             }
                         }
+                        URL url2 = new URL(mInfo.url);
+                        URLConnection uc = url2.openConnection();
+                        mInfo.size = uc.getContentLength();
                         mInfo.save();
                         jsonReader1.endObject();
                         jsonReader1.close();

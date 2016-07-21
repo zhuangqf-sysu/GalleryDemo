@@ -11,9 +11,9 @@ import java.util.List;
  */
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private List<RemoteImageInfo>mList;
+    private List<? extends RemoteImageInfo>mList;
 
-    public ViewPagerAdapter(FragmentManager fm,List<RemoteImageInfo>list) {
+    public ViewPagerAdapter(FragmentManager fm,List<? extends RemoteImageInfo>list) {
         super(fm);
         mList = list;
     }

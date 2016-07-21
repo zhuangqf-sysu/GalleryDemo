@@ -9,12 +9,14 @@ import com.orm.SugarRecord;
 public class RemoteImageInfo extends SugarRecord {
     String title;
     String url;
+    long size;
 
     public RemoteImageInfo(){}
 
-    public RemoteImageInfo(Long id,String title,String url){
+    public RemoteImageInfo(Long id,String title,String url,Long size){
         this.setId(id);
         this.title = title;
         this.url = url;
+        this.size = size;
     }
 }
