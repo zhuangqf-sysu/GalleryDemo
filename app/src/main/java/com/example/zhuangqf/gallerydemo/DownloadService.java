@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -46,7 +47,7 @@ public class DownloadService extends IntentService {
     private void handleActionStop(Intent intent){
         Long mID = intent.getLongExtra(PARAM_ID, -1);
         if(mID!=-1) {
-
+            Toast.makeText(this,"Stop is not implemented!",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -56,6 +57,7 @@ public class DownloadService extends IntentService {
             RemoteImageInfo mRemoteInfo = RemoteImageInfo.findById(RemoteImageInfo.class, mID);
             broadcast(true, mRemoteInfo.title);
             DownloadRunnable runnable = new DownloadRunnable(this,mID);
+            mPool.submit(runnable);
         }
     }
 

@@ -167,7 +167,7 @@ public class Main2Activity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_local:
+            case R.id.menu_remote:
                 Intent intent1 = new Intent(Main2Activity.this, MainActivity.class);
                 startActivity(intent1);
                 break;
