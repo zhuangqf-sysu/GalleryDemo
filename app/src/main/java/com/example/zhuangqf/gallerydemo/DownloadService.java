@@ -25,12 +25,10 @@ public class DownloadService extends IntentService {
     public static String PARAM_ID = "com.example.zhuangqf.gallerydemo.param_id";
 
     private static ExecutorService mPool;
-    private static HashMap<Long,Future<?>> mTaskMap;
 
     public DownloadService() {
         super("DownloadService");
         mPool = Executors.newFixedThreadPool(3);
-        mTaskMap = new HashMap<>();
     }
 
     @Override
@@ -48,8 +46,7 @@ public class DownloadService extends IntentService {
     private void handleActionStop(Intent intent){
         Long mID = intent.getLongExtra(PARAM_ID, -1);
         if(mID!=-1) {
-            Future<?> future = mTaskMap.get(mID);
-            future.cancel(true);
+
         }
     }
 
@@ -57,10 +54,8 @@ public class DownloadService extends IntentService {
         Long mID = intent.getLongExtra(PARAM_ID, -1);
         if(mID!=-1) {
             RemoteImageInfo mRemoteInfo = RemoteImageInfo.findById(RemoteImageInfo.class, mID);
-            broadcast(true,mRemoteInfo.title);
+            broadcast(true, mRemoteInfo.title);
             DownloadRunnable runnable = new DownloadRunnable(this,mID);
-            Future<?> future = mPool.submit(runnable);
-            mTaskMap.put(mID,future);
         }
     }
 
@@ -94,7 +89,7 @@ public class DownloadService extends IntentService {
                 InputStream in = mURL.openStream();
                 OutputStream out = mContext.openFileOutput(String.valueOf(mInfo.createAt),MODE_PRIVATE);
                 long hasRead = 0;
-                byte[] buff = new byte[1024];
+                byte[] buff = new byte[10240];
 
                 in.skip(mInfo.progress);
                 while((hasRead = in.read(buff))>0){
@@ -105,6 +100,8 @@ public class DownloadService extends IntentService {
                 }
                 in.close();
                 out.close();
+                mInfo.state = 2;
+                mInfo.save();
                 broadcast(false, mInfo.title);
             } catch (Exception e) {
                 e.printStackTrace();

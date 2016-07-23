@@ -121,10 +121,10 @@ public class Main2Activity extends AppCompatActivity {
                 startService(intent1);
                 return true;
             case R.id.stop:
-                Intent intent = new Intent(Main2Activity.this,DownloadService.class);
-                intent.setAction(DownloadService.ACTION_DOWNLOAD_STOP);
-                intent.putExtra(DownloadService.PARAM_ID, mInfo.getId());
-                startService(intent);
+                Intent intent2 = new Intent(Main2Activity.this,DownloadService.class);
+                intent2.setAction(DownloadService.ACTION_DOWNLOAD_STOP);
+                intent2.putExtra(DownloadService.PARAM_ID, mInfo.getId());
+                startService(intent2);
                 return true;
             default:return super.onContextItemSelected(item);
         }
