@@ -176,7 +176,6 @@ public class Main2Activity extends AppCompatActivity {
         }
         return true;
     }
-
     private class UpdateTask extends TimerTask{
 
         @Override

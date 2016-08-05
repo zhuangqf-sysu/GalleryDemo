@@ -1,8 +1,10 @@
 package com.example.zhuangqf.gallerydemo;
 
+import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -79,6 +81,7 @@ public class DownloadService extends IntentService {
             mID = ID;
         }
 
+        @TargetApi(Build.VERSION_CODES.KITKAT)
         @Override
         public void run() {
             LocalImageInfo mInfo = LocalImageInfo.findById(LocalImageInfo.class,mID);
@@ -86,10 +89,20 @@ public class DownloadService extends IntentService {
                 RemoteImageInfo remoteImageInfo = RemoteImageInfo.findById(RemoteImageInfo.class,mID);
                 mInfo = new LocalImageInfo(remoteImageInfo);
             }
+
+            mInfo.state = LocalImageInfo.DOWNLOAD_DOING;
+            mInfo.save();
+
+            URL mURL = null;
             try {
-                URL mURL = new URL(mInfo.url);
-                InputStream in = mURL.openStream();
-                OutputStream out = mContext.openFileOutput(String.valueOf(mInfo.createAt),MODE_PRIVATE);
+                mURL = new URL(mInfo.url);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            try (InputStream in = mURL.openStream();
+                 OutputStream out = mContext.openFileOutput(String.valueOf(mInfo.createAt),MODE_PRIVATE);
+            ){
                 long hasRead = 0;
                 byte[] buff = new byte[10240];
 
@@ -100,12 +113,11 @@ public class DownloadService extends IntentService {
                     mInfo.progress+=hasRead;
                     mInfo.save();
                 }
-                in.close();
-                out.close();
-                mInfo.state = 2;
+                mInfo.state = LocalImageInfo.DOWNLOAD_DONE;
                 mInfo.save();
                 broadcast(false, mInfo.title);
             } catch (Exception e) {
+                mInfo.state = LocalImageInfo.DOWNLOAD_STOP;
                 e.printStackTrace();
             }
         }

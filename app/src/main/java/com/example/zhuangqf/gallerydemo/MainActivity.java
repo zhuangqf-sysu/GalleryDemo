@@ -3,6 +3,8 @@ package com.example.zhuangqf.gallerydemo;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -28,11 +30,15 @@ public class MainActivity extends AppCompatActivity {
     ListView mListView;
     RemoteAdapter mRemoteAdapter;
     int page = 1;
+    NetworkReceiver mReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mReceiver = new NetworkReceiver();
 
         mContext = this;
         mPullToRefreshListView = (PullToRefreshListView)findViewById(R.id.listView);
@@ -57,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        registerForContextMenu(mListView);
-
         mHandler = new Handler(){
             @Override
             public void handleMessage(Message msg){
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+        registerForContextMenu(mListView);
         new GetRemoteDataTask(mHandler).execute();
     }
 
@@ -123,6 +128,27 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mReceiver = new NetworkReceiver();
+        IntentFilter mFilter = new IntentFilter();
+        mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mReceiver, mFilter);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterForContextMenu(mListView);
+        super.onDestroy();
     }
 
 }

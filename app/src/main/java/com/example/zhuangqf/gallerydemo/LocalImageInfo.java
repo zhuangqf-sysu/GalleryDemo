@@ -8,6 +8,12 @@ public class LocalImageInfo extends RemoteImageInfo {
     int state = 0; //0==未开始，1==已开始，2==已结束,3==暂停
     long progress = 0;
 
+    public static final int DOWNLOAD_DONOT = 0;
+    public static final int DOWNLOAD_DOING = 1;
+    public static final int DOWNLOAD_DONE = 2;
+    public static final int DOWNLOAD_STOP = 3;
+
+
     public LocalImageInfo(){
         super();
     }
@@ -23,7 +29,7 @@ public class LocalImageInfo extends RemoteImageInfo {
     public  LocalImageInfo(RemoteImageInfo remoteImageInfo){
         super(remoteImageInfo.getId(),remoteImageInfo.title,remoteImageInfo.url,remoteImageInfo.size);
         this.progress = 0;
-        this.state = 0;
+        this.state = DOWNLOAD_DONOT;
         this.createAt = System.currentTimeMillis();
     }
 }
