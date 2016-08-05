@@ -5,21 +5,15 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 import android.widget.Toast;
 
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class DownloadService extends IntentService {
 
@@ -114,6 +108,8 @@ public class DownloadService extends IntentService {
                     mInfo.save();
                 }
                 mInfo.state = LocalImageInfo.DOWNLOAD_DONE;
+                File file = mContext.getFileStreamPath(String.valueOf(mInfo.createAt));
+                mInfo.url = file.toURI().toASCIIString();
                 mInfo.save();
                 broadcast(false, mInfo.title);
             } catch (Exception e) {

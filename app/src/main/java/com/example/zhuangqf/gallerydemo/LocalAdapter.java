@@ -1,7 +1,11 @@
 package com.example.zhuangqf.gallerydemo;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +17,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -29,6 +37,7 @@ public class LocalAdapter extends ArrayAdapter<LocalImageInfo> {
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         if(convertView == null) convertView = mInflater.inflate(R.layout.item_local,null);
@@ -39,11 +48,14 @@ public class LocalAdapter extends ArrayAdapter<LocalImageInfo> {
         ProgressBar mBar = (ProgressBar)convertView.findViewById(R.id.progressBar);
 
         mText.setText(mInfo.title);
+
         Glide.with(mContext)
                 .load(mInfo.url)
                 .error(R.mipmap.image_error)
                 .placeholder(R.mipmap.preloader)
                 .into(mImage);
+
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
